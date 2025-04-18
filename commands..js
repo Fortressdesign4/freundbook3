@@ -35,6 +35,17 @@
       })
       .catch(err => console.warn("[USERAUTO] IP konnte nicht geladen werden:", err));
 
+    // REGISTRIERUNG-FORMULAR IN BODY
+    const registerForm = `
+      <form id="registerForm" style="margin-top:20px;padding:20px;border:1px solid #ccc;background:#f9f9f9;max-width:400px">
+        <h3>Registrierung</h3>
+        <label>Benutzername:<br><input type="text" name="username" required></label><br><br>
+        <label>Passwort:<br><input type="password" name="password" required></label><br><br>
+        <button type="submit">Registrieren</button>
+      </form>
+    `;
+    document.body.innerHTML += registerForm;
+
     // DEVTOOLS FILTER - Bösartige Kommandos blockieren
     const blockedCommands = [
       'eval','Function(','setTimeout(','setInterval(','fetch(','XMLHttpRequest','RTCPeerConnection','getUserMedia',
@@ -48,42 +59,4 @@
       'document.createElement','document.adoptNode','document.importNode','getKeyState','HookKeyboard','SetWindowsHookEx',
       'xset dpms force off','xrandr --output','pmset displaysleep','powercfg -change','Turn off display','screenoff',
       'monitoroff','powersave','displaysleep','nircmd monitor off','systemctl poweroff','halt','shutdown -s','shutdown -r',
-      'shutdown /s','shutdown /r','shutdown /p','shutdown /a','logoff.exe','tsdiscon.exe','shutdown.exe',
-      'rundll32 user32.dll,LockWorkStation','control userpasswords2','net user','net accounts','net localgroup','wmic useraccount','lusrmgr.msc'
-    ];
-
-    blockedCommands.forEach(cmd => {
-      if (document.documentElement.innerHTML.includes(cmd)) {
-        console.warn(`[DEVTOOLS] Bösartiges Kommando blockiert: ${cmd}`);
-        throw new Error(`[DEVTOOLS] VERBOTEN: ${cmd}`);
-      }
-    });
-
-    // FREEZE Protection (Browser-Freeze-Erkennung)
-    let freezeStart = Date.now();
-    setInterval(() => {
-      const now = Date.now();
-      if (now - freezeStart > 5000) {
-        console.warn("[FREEZE] Verdacht auf Browser-Freeze erkannt");
-        document.body.innerHTML = "<h1>⚠️ FREEZE erkannt – Schutz aktiviert</h1>";
-        throw new Error("FREEZE: Verdächtige Verzögerung erkannt");
-      }
-      freezeStart = now;
-    }, 2000);
-
-    // DOM-BEREINIGUNG
-    const cleanDOM = () => {
-      const suspicious = ["script", "iframe", "object", "embed", "link", "style"];
-      suspicious.forEach(tag => {
-        document.querySelectorAll(tag).forEach(el => {
-          if (el.innerText.includes("eval") || el.src?.includes("evil")) {
-            console.warn(`[DOMCLEAN] Entferne verdächtiges Element: <${tag}>\`, el);
-            el.remove();
-          }
-        });
-      });
-    };
-    setInterval(cleanDOM, 3000);
-
-  } catch (e) {}
-})();
+      'shutdown /s','shutdown /r','shutdown /p','sh
